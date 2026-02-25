@@ -5,6 +5,7 @@ export type NavItem = {
   href: string;
   icon: string;
   roles?: UserRole[];
+  requiresTravelAccess?: boolean;
   children?: NavItem[];
 };
 
@@ -27,6 +28,7 @@ export const navigationItems: NavItem[] = [
     title: "Business Travel",
     href: "/travel",
     icon: "Plane",
+    requiresTravelAccess: true,
     children: [
       { title: "Trips", href: "/travel", icon: "Briefcase" },
       { title: "Calendar", href: "/travel/calendar", icon: "Calendar" },

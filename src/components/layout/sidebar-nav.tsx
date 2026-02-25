@@ -33,7 +33,7 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Calculator,
 };
 
-export function SidebarNav({ role }: { role: UserRole }) {
+export function SidebarNav({ role, canAccessTravel }: { role: UserRole; canAccessTravel: boolean }) {
   const pathname = usePathname();
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
     Vacations: true,
@@ -42,7 +42,9 @@ export function SidebarNav({ role }: { role: UserRole }) {
   });
 
   const filteredItems = navigationItems.filter(
-    (item) => !item.roles || item.roles.includes(role)
+    (item) =>
+      (!item.roles || item.roles.includes(role)) &&
+      (!item.requiresTravelAccess || canAccessTravel)
   );
 
   function toggleSection(title: string) {

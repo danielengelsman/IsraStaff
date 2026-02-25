@@ -15,6 +15,7 @@ export default async function TripDetailPage({
   const { id } = await params;
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (profile.role !== "admin" && !profile.can_access_travel) redirect("/dashboard");
 
   const trip = await getTripById(id);
   if (!trip) notFound();

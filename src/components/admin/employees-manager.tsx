@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { updateEmployee } from "@/lib/actions/employees";
 import { toast } from "sonner";
 import { Search } from "lucide-react";
@@ -62,6 +63,16 @@ export function EmployeesManager({ employees, departments }: EmployeesManagerPro
     }
   }
 
+  async function handleTravelAccessChange(profileId: string, canAccessTravel: boolean) {
+    const result = await updateEmployee(profileId, { can_access_travel: canAccessTravel });
+    if (result.error) {
+      toast.error(result.error);
+    } else {
+      toast.success(canAccessTravel ? "Travel access granted" : "Travel access revoked");
+      router.refresh();
+    }
+  }
+
   const roleColors: Record<string, string> = {
     employee: "bg-gray-100 text-gray-700",
     manager: "bg-blue-100 text-blue-700",
@@ -88,6 +99,7 @@ export function EmployeesManager({ employees, departments }: EmployeesManagerPro
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead>Department</TableHead>
+              <TableHead>Travel Access</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -131,6 +143,13 @@ export function EmployeesManager({ employees, departments }: EmployeesManagerPro
                       ))}
                     </SelectContent>
                   </Select>
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={emp.role === "admin" || emp.can_access_travel}
+                    disabled={emp.role === "admin"}
+                    onCheckedChange={(checked) => handleTravelAccessChange(emp.id, checked)}
+                  />
                 </TableCell>
               </TableRow>
             ))}

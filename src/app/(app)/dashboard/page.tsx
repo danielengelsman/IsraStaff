@@ -16,10 +16,12 @@ export default async function DashboardPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
 
+  const canAccessTravel = profile.role === "admin" || profile.can_access_travel;
+
   const [allowance, upcoming, activeTrips] = await Promise.all([
     getVacationBalance(profile.id),
     getUpcomingVacations(profile.id),
-    getActiveTrips(profile.id),
+    canAccessTravel ? getActiveTrips(profile.id) : Promise.resolve([]),
   ]);
 
   const isManagerOrAdmin = profile.role === "manager" || profile.role === "admin";
@@ -41,12 +43,14 @@ export default async function DashboardPage() {
             Request Time Off
           </Button>
         </Link>
-        <Link href="/travel">
-          <Button size="sm" variant="outline">
-            <Plane className="mr-1 h-4 w-4" />
-            New Trip
-          </Button>
-        </Link>
+        {canAccessTravel && (
+          <Link href="/travel">
+            <Button size="sm" variant="outline">
+              <Plane className="mr-1 h-4 w-4" />
+              New Trip
+            </Button>
+          </Link>
+        )}
       </PageHeader>
 
       {/* Vacation Balance */}
@@ -101,9 +105,9 @@ export default async function DashboardPage() {
       )}
 
       {/* Main Content Grid */}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className={`grid gap-6 ${canAccessTravel ? "lg:grid-cols-2" : ""}`}>
         <UpcomingVacations vacations={upcoming} />
-        <ActiveTrips trips={activeTrips} />
+        {canAccessTravel && <ActiveTrips trips={activeTrips} />}
       </div>
 
       {/* Pending Approvals for Manager/Admin */}

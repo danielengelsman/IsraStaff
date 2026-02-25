@@ -12,9 +12,10 @@ type MobileNavProps = {
   name: string;
   email: string;
   role: UserRole;
+  canAccessTravel: boolean;
 };
 
-export function MobileNav({ name, email, role }: MobileNavProps) {
+export function MobileNav({ name, email, role, canAccessTravel }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -30,7 +31,7 @@ export function MobileNav({ name, email, role }: MobileNavProps) {
             <h2 className="text-lg font-bold">IsraStaff</h2>
           </div>
           <div className="flex-1 overflow-y-auto" onClick={() => setOpen(false)}>
-            <SidebarNav role={role} />
+            <SidebarNav role={role} canAccessTravel={canAccessTravel} />
           </div>
           <div className="border-t p-2">
             <SidebarUser name={name} email={email} role={role} />

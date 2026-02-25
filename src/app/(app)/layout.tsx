@@ -18,6 +18,7 @@ export default async function AppLayout({
   }
 
   const role = profile.role as UserRole;
+  const canAccessTravel = role === "admin" || profile.can_access_travel;
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -27,7 +28,7 @@ export default async function AppLayout({
           <h1 className="text-lg font-bold">IsraStaff</h1>
         </div>
         <div className="flex-1 overflow-y-auto py-2">
-          <SidebarNav role={role} />
+          <SidebarNav role={role} canAccessTravel={canAccessTravel} />
         </div>
         <Separator />
         <div className="p-2">
@@ -47,6 +48,7 @@ export default async function AppLayout({
             name={profile.full_name}
             email={profile.email}
             role={role}
+            canAccessTravel={canAccessTravel}
           />
           <h1 className="text-lg font-bold">IsraStaff</h1>
         </header>

@@ -8,6 +8,7 @@ import { TripsList } from "@/components/travel/trips-list";
 export default async function TravelPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (profile.role !== "admin" && !profile.can_access_travel) redirect("/dashboard");
 
   const trips = await getAllTrips();
 

@@ -54,15 +54,26 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Admin route protection
-  if (user && pathname.startsWith("/admin")) {
+  // Protected route checks (admin + travel)
+  if (user && (pathname.startsWith("/admin") || pathname.startsWith("/travel"))) {
     const { data: profile } = await supabase
       .from("profiles")
-      .select("role")
+      .select("role, can_access_travel")
       .eq("id", user.id)
       .single();
 
-    if (!profile || profile.role !== "admin") {
+    // Admin route protection
+    if (pathname.startsWith("/admin") && (!profile || profile.role !== "admin")) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
+
+    // Travel route protection
+    if (
+      pathname.startsWith("/travel") &&
+      (!profile || (profile.role !== "admin" && !profile.can_access_travel))
+    ) {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";
       return NextResponse.redirect(url);

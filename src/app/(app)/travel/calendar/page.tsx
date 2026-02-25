@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/shared/page-header";
 export default async function TravelCalendarPage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
+  if (profile.role !== "admin" && !profile.can_access_travel) redirect("/dashboard");
 
   const now = new Date();
   const start = format(startOfMonth(now), "yyyy-MM-dd");
