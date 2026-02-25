@@ -74,7 +74,7 @@ export type Database = {
         };
         Relationships: [
           {
-            foreignKeyName: "departments_manager_id_fkey";
+            foreignKeyName: "fk_departments_manager";
             columns: ["manager_id"];
             isOneToOne: false;
             referencedRelation: "profiles";
