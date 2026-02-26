@@ -1,4 +1,4 @@
-import type { Profile, VacationRequest, BusinessTrip, TripEvent, TripExpense, Department } from "./database";
+import type { Profile, VacationRequest, VacationAllowance, BusinessTrip, TripEvent, TripExpense, Department } from "./database";
 
 export type VacationRequestWithProfile = VacationRequest & {
   profiles: Pick<Profile, "full_name" | "email" | "avatar_url">;
@@ -32,3 +32,14 @@ export type CalendarEvent = {
 };
 
 export type UserRole = "employee" | "manager" | "admin";
+
+export type TeamMemberWithStatus = {
+  id: string;
+  full_name: string;
+  email: string;
+  role: UserRole;
+  avatar_url: string | null;
+  vacation_allowance: VacationAllowance | null;
+  current_vacation: VacationRequest | null;
+  upcoming_vacations: VacationRequest[];
+};

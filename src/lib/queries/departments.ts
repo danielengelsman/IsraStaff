@@ -21,6 +21,18 @@ export async function getDepartments(): Promise<DepartmentWithManager[]> {
   return (data as unknown as DepartmentWithManager[]) ?? [];
 }
 
+export async function getManagedDepartment(managerId: string): Promise<Department | null> {
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from("departments")
+    .select("*")
+    .eq("manager_id", managerId)
+    .maybeSingle();
+
+  return data;
+}
+
 export async function getDepartmentById(id: string): Promise<Department | null> {
   const supabase = await createClient();
 
