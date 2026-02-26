@@ -19,7 +19,6 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -227,9 +226,11 @@ export function EmployeesManager({ employees, departments }: EmployeesManagerPro
                     onValueChange={(v) => handleRoleChange(emp.id, v as "employee" | "manager" | "admin")}
                   >
                     <SelectTrigger className="w-[130px] h-8">
-                      <Badge variant="secondary" className={`${roleColors[emp.role]} text-xs`}>
-                        {emp.role}
-                      </Badge>
+                      <SelectValue>
+                        <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${roleColors[emp.role]}`}>
+                          {emp.role}
+                        </span>
+                      </SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="employee">Employee</SelectItem>
