@@ -6,12 +6,14 @@ export async function getVacationBalance(profileId: string, year?: number): Prom
   const supabase = await createClient();
   const currentYear = year ?? new Date().getFullYear();
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("vacation_allowances")
     .select("*")
     .eq("profile_id", profileId)
     .eq("year", currentYear)
     .single();
+
+  if (error) console.error("getVacationBalance error:", error);
 
   return data;
 }
@@ -19,11 +21,13 @@ export async function getVacationBalance(profileId: string, year?: number): Prom
 export async function getMyVacationRequests(profileId: string): Promise<VacationRequest[]> {
   const supabase = await createClient();
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("vacation_requests")
     .select("*")
     .eq("profile_id", profileId)
     .order("created_at", { ascending: false });
+
+  if (error) console.error("getMyVacationRequests error:", error);
 
   return data ?? [];
 }
@@ -52,7 +56,9 @@ export async function getVacationRequests(filters?: {
     query = query.eq("profile_id", filters.profileId);
   }
 
-  const { data } = await query;
+  const { data, error } = await query;
+
+  if (error) console.error("getVacationRequests error:", error);
 
   return (data as unknown as VacationRequestWithProfile[]) ?? [];
 }
@@ -60,10 +66,12 @@ export async function getVacationRequests(filters?: {
 export async function getPendingRequestsCount(): Promise<number> {
   const supabase = await createClient();
 
-  const { count } = await supabase
+  const { count, error } = await supabase
     .from("vacation_requests")
     .select("*", { count: "exact", head: true })
     .eq("status", "pending");
+
+  if (error) console.error("getPendingRequestsCount error:", error);
 
   return count ?? 0;
 }
@@ -72,7 +80,7 @@ export async function getUpcomingVacations(profileId: string, limit = 5): Promis
   const supabase = await createClient();
   const today = new Date().toISOString().split("T")[0];
 
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("vacation_requests")
     .select("*")
     .eq("profile_id", profileId)
@@ -80,6 +88,8 @@ export async function getUpcomingVacations(profileId: string, limit = 5): Promis
     .gte("end_date", today)
     .order("start_date")
     .limit(limit);
+
+  if (error) console.error("getUpcomingVacations error:", error);
 
   return data ?? [];
 }
