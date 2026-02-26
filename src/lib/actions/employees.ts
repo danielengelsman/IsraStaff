@@ -50,25 +50,28 @@ export async function createEmployee(formData: {
     return { error: authError.message };
   }
 
-  // The handle_new_user trigger auto-creates the profile with defaults.
-  // If admin chose non-default settings, update the profile now.
+  // Explicitly upsert the profile to ensure it exists.
+  // The handle_new_user trigger may or may not have created it,
+  // so upsert guarantees the profile row is there with correct data.
   const role = formData.role || "employee";
-  const needsUpdate =
-    role !== "employee" ||
-    formData.department_id ||
-    formData.can_access_travel;
+  const canAccessTravel = role === "admin" ? true : (formData.can_access_travel || false);
 
-  if (needsUpdate && newUser.user) {
-    const updateData: Record<string, unknown> = {};
-    if (role !== "employee") updateData.role = role;
-    if (formData.department_id) updateData.department_id = formData.department_id;
-    if (formData.can_access_travel) updateData.can_access_travel = true;
-    if (role === "admin") updateData.can_access_travel = true;
-
-    await adminClient
+  if (newUser.user) {
+    const { error: profileError } = await adminClient
       .from("profiles")
-      .update(updateData)
-      .eq("id", newUser.user.id);
+      .upsert({
+        id: newUser.user.id,
+        email: formData.email,
+        full_name: formData.full_name,
+        role,
+        department_id: formData.department_id || null,
+        can_access_travel: canAccessTravel,
+      });
+
+    if (profileError) {
+      console.error("Profile upsert error:", profileError);
+      return { error: "User created but profile setup failed: " + profileError.message };
+    }
   }
 
   revalidatePath("/admin/employees");

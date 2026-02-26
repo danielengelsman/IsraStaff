@@ -25,7 +25,7 @@ export async function getProfileWithDepartment(): Promise<ProfileWithDepartment 
 
   const { data } = await supabase
     .from("profiles")
-    .select("*, departments(id, name)")
+    .select("*, departments!profiles_department_id_fkey(id, name)")
     .eq("id", user.id)
     .single();
 
@@ -45,10 +45,12 @@ export async function getTeamMembers(departmentId: string) {
 
 export async function getAllProfiles(): Promise<ProfileWithDepartment[]> {
   const supabase = await createClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("profiles")
-    .select("*, departments(id, name)")
+    .select("*, departments!profiles_department_id_fkey(id, name)")
     .order("full_name");
+
+  if (error) console.error("getAllProfiles error:", error);
 
   return (data as ProfileWithDepartment[]) ?? [];
 }
