@@ -27,7 +27,8 @@ export default async function TravelCalendarPage() {
         description="View upcoming business trips across the organization"
       />
       <CalendarView
-        events={events}
+        initialEvents={events}
+        eventType="travel"
         departments={departments}
         showDepartmentFilter={profile.role === "admin"}
       />

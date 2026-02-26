@@ -26,7 +26,8 @@ export default async function VacationCalendarPage() {
         description="View team vacation schedules at a glance"
       />
       <CalendarView
-        events={events}
+        initialEvents={events}
+        eventType="vacations"
         departments={departments}
         showDepartmentFilter={profile.role === "admin"}
       />

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -25,16 +25,17 @@ import {
   parseISO,
   isWithinInterval,
 } from "date-fns";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { fetchCalendarEvents } from "@/lib/actions/calendar";
 import type { CalendarEvent } from "@/types";
 import type { Department } from "@/types/database";
 
 type CalendarViewProps = {
-  events: CalendarEvent[];
+  initialEvents: CalendarEvent[];
+  eventType: "vacations" | "travel" | "all";
   departments?: Department[];
   showDepartmentFilter?: boolean;
-  onMonthChange?: (start: string, end: string) => void;
 };
 
 const EVENT_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
@@ -44,14 +45,16 @@ const EVENT_COLORS: Record<string, { bg: string; text: string; dot: string }> = 
 };
 
 export function CalendarView({
-  events,
+  initialEvents,
+  eventType,
   departments,
   showDepartmentFilter,
-  onMonthChange,
 }: CalendarViewProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [events, setEvents] = useState<CalendarEvent[]>(initialEvents);
   const [selectedDay, setSelectedDay] = useState<Date | null>(null);
   const [departmentFilter, setDepartmentFilter] = useState<string>("all");
+  const [isPending, startTransition] = useTransition();
 
   const monthStart = startOfMonth(currentDate);
   const monthEnd = endOfMonth(currentDate);
@@ -59,20 +62,30 @@ export function CalendarView({
   const calendarEnd = endOfWeek(monthEnd, { weekStartsOn: 0 });
   const calendarDays = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
+  const loadEvents = useCallback(
+    (date: Date) => {
+      const start = format(startOfMonth(date), "yyyy-MM-dd");
+      const end = format(endOfMonth(date), "yyyy-MM-dd");
+      startTransition(async () => {
+        const newEvents = await fetchCalendarEvents(start, end, eventType);
+        setEvents(newEvents);
+      });
+    },
+    [eventType]
+  );
+
   function navigateMonth(direction: "prev" | "next") {
     const newDate = direction === "prev" ? subMonths(currentDate, 1) : addMonths(currentDate, 1);
     setCurrentDate(newDate);
     setSelectedDay(null);
-    if (onMonthChange) {
-      const start = format(startOfMonth(newDate), "yyyy-MM-dd");
-      const end = format(endOfMonth(newDate), "yyyy-MM-dd");
-      onMonthChange(start, end);
-    }
+    loadEvents(newDate);
   }
 
   function goToToday() {
-    setCurrentDate(new Date());
+    const today = new Date();
+    setCurrentDate(today);
     setSelectedDay(null);
+    loadEvents(today);
   }
 
   function getEventsForDay(day: Date): CalendarEvent[] {
@@ -104,6 +117,7 @@ export function CalendarView({
           </Button>
           <h2 className="min-w-[180px] text-center text-lg font-semibold">
             {format(currentDate, "MMMM yyyy")}
+            {isPending && <Loader2 className="ml-2 inline h-4 w-4 animate-spin" />}
           </h2>
           <Button variant="outline" size="icon" onClick={() => navigateMonth("next")}>
             <ChevronRight className="h-4 w-4" />
@@ -141,7 +155,7 @@ export function CalendarView({
       </div>
 
       {/* Calendar Grid */}
-      <div className="rounded-lg border">
+      <div className={cn("rounded-lg border", isPending && "opacity-60")}>
         {/* Day Headers */}
         <div className="grid grid-cols-7 border-b bg-muted/50">
           {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((day) => (
