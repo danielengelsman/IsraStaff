@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "IsraStaff - Staff Management",
+  title: "IsraTransfer - Staff Management",
   description: "Manage staff vacations, days off, and business travel",
 };
 

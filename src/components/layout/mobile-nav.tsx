@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Menu } from "lucide-react";
@@ -28,7 +29,7 @@ export function MobileNav({ name, email, role, canAccessTravel }: MobileNavProps
       <SheetContent side="left" className="w-64 p-0">
         <div className="flex h-full flex-col">
           <div className="border-b p-4">
-            <h2 className="text-lg font-bold">IsraStaff</h2>
+            <Image src="/logo.svg" alt="IsraTransfer" width={150} height={32} />
           </div>
           <div className="flex-1 overflow-y-auto" onClick={() => setOpen(false)}>
             <SidebarNav role={role} canAccessTravel={canAccessTravel} />

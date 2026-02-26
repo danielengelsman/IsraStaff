@@ -59,7 +59,7 @@ export function SignupForm() {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
-        <CardDescription>Join IsraStaff to manage your team</CardDescription>
+        <CardDescription>Join IsraTransfer to manage your team</CardDescription>
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="space-y-4">

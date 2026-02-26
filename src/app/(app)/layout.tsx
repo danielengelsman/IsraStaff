@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Image from "next/image";
 import { getCurrentProfile } from "@/lib/queries/profiles";
 import { SidebarNav } from "@/components/layout/sidebar-nav";
 import { SidebarUser } from "@/components/layout/sidebar-user";
@@ -25,7 +26,7 @@ export default async function AppLayout({
       {/* Desktop Sidebar */}
       <aside className="hidden w-64 flex-col border-r bg-background md:flex">
         <div className="flex h-14 items-center border-b px-4">
-          <h1 className="text-lg font-bold">IsraStaff</h1>
+          <Image src="/logo.svg" alt="IsraTransfer" width={150} height={32} priority />
         </div>
         <div className="flex-1 overflow-y-auto py-2">
           <SidebarNav role={role} canAccessTravel={canAccessTravel} />
@@ -50,7 +51,7 @@ export default async function AppLayout({
             role={role}
             canAccessTravel={canAccessTravel}
           />
-          <h1 className="text-lg font-bold">IsraStaff</h1>
+          <Image src="/logo.svg" alt="IsraTransfer" width={150} height={32} priority />
         </header>
 
         {/* Page Content */}
