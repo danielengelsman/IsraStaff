@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getHolidaysInRange } from "@/lib/queries/holidays";
 import type { CalendarEvent } from "@/types";
 
 export async function getCalendarEvents(
@@ -57,6 +58,21 @@ export async function getCalendarEvents(
         });
       }
     }
+  }
+
+  // Always include holidays on all calendars
+  const holidays = await getHolidaysInRange(startDate, endDate);
+  for (const h of holidays) {
+    events.push({
+      id: h.id,
+      title: h.name,
+      start: h.date,
+      end: h.date,
+      type: "holiday",
+      status: "approved",
+      profileName: "",
+      profileId: "",
+    });
   }
 
   return events;

@@ -40,6 +40,7 @@ type CalendarViewProps = {
 const EVENT_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
   vacation: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
   business_trip: { bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
+  holiday: { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
 };
 
 export function CalendarView({
@@ -75,10 +76,16 @@ export function CalendarView({
   }
 
   function getEventsForDay(day: Date): CalendarEvent[] {
-    return events.filter((event) => {
+    const dayEvents = events.filter((event) => {
       const start = parseISO(event.start);
       const end = parseISO(event.end);
       return isWithinInterval(day, { start, end }) || isSameDay(day, start) || isSameDay(day, end);
+    });
+    // Sort holidays first so they appear at the top
+    return dayEvents.sort((a, b) => {
+      if (a.type === "holiday" && b.type !== "holiday") return -1;
+      if (a.type !== "holiday" && b.type === "holiday") return 1;
+      return 0;
     });
   }
 
@@ -186,7 +193,7 @@ export function CalendarView({
                           event.status === "pending" && "opacity-60"
                         )}
                       >
-                        {event.profileName.split(" ")[0]}
+                        {event.type === "holiday" ? event.title : event.profileName.split(" ")[0]}
                       </div>
                     );
                   })}
@@ -225,12 +232,20 @@ export function CalendarView({
                     >
                       <div className={cn("h-3 w-3 rounded-full", colors.dot)} />
                       <div>
-                        <p className={cn("text-sm font-medium", colors.text)}>
-                          {event.profileName}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {event.title} {event.status === "pending" ? "(Pending)" : ""}
-                        </p>
+                        {event.type === "holiday" ? (
+                          <p className={cn("text-sm font-medium", colors.text)}>
+                            {event.title}
+                          </p>
+                        ) : (
+                          <>
+                            <p className={cn("text-sm font-medium", colors.text)}>
+                              {event.profileName}
+                            </p>
+                            <p className="text-xs text-muted-foreground">
+                              {event.title} {event.status === "pending" ? "(Pending)" : ""}
+                            </p>
+                          </>
+                        )}
                       </div>
                     </div>
                   );
