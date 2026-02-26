@@ -23,7 +23,7 @@ export async function upsertAllowance(data: {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/admin/allowances");
+  revalidatePath("/admin/employees");
   revalidatePath("/dashboard");
   return { success: true };
 }
@@ -64,6 +64,6 @@ export async function initializeYearAllowances(
 
   if (error) return { error: error.message };
 
-  revalidatePath("/admin/allowances");
+  revalidatePath("/admin/employees");
   return { success: true, count: newAllowances.length };
 }

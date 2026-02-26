@@ -42,7 +42,6 @@ export const navigationItems: NavItem[] = [
     children: [
       { title: "Departments", href: "/admin/departments", icon: "Building2" },
       { title: "Employees", href: "/admin/employees", icon: "Users" },
-      { title: "Allowances", href: "/admin/allowances", icon: "Calculator" },
       { title: "Holidays", href: "/admin/holidays", icon: "CalendarHeart" },
     ],
   },

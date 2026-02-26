@@ -1,21 +1,19 @@
 import { createClient } from "@/lib/supabase/server";
+import type { VacationAllowance } from "@/types/database";
 
-export async function getAllowancesForYear(year: number) {
+export async function getEmployeeAllowances(year: number): Promise<Record<string, VacationAllowance>> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
     .from("vacation_allowances")
-    .select("*, profiles(full_name, email, department_id, departments(name))")
+    .select("*")
     .eq("year", year);
 
-  if (error) console.error("getAllowancesForYear error:", error);
+  if (error) console.error("getEmployeeAllowances error:", error);
 
-  // Sort by employee name in JS (Supabase JS doesn't support ordering by foreign table columns directly)
-  const sorted = (data ?? []).sort((a, b) => {
-    const nameA = (a as any).profiles?.full_name ?? "";
-    const nameB = (b as any).profiles?.full_name ?? "";
-    return nameA.localeCompare(nameB);
-  });
-
-  return sorted;
+  const map: Record<string, VacationAllowance> = {};
+  for (const a of (data ?? []) as VacationAllowance[]) {
+    map[a.profile_id] = a;
+  }
+  return map;
 }
