@@ -6,10 +6,16 @@ export async function getAllowancesForYear(year: number) {
   const { data, error } = await supabase
     .from("vacation_allowances")
     .select("*, profiles(full_name, email, department_id, departments(name))")
-    .eq("year", year)
-    .order("profiles(full_name)");
+    .eq("year", year);
 
   if (error) console.error("getAllowancesForYear error:", error);
 
-  return data ?? [];
+  // Sort by employee name in JS (Supabase JS doesn't support ordering by foreign table columns directly)
+  const sorted = (data ?? []).sort((a, b) => {
+    const nameA = (a as any).profiles?.full_name ?? "";
+    const nameB = (b as any).profiles?.full_name ?? "";
+    return nameA.localeCompare(nameB);
+  });
+
+  return sorted;
 }
