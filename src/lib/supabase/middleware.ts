@@ -40,6 +40,8 @@ export async function updateSession(request: NextRequest) {
     !user &&
     !pathname.startsWith("/login") &&
     !pathname.startsWith("/signup") &&
+    !pathname.startsWith("/forgot-password") &&
+    !pathname.startsWith("/reset-password") &&
     !pathname.startsWith("/auth/callback")
   ) {
     const url = request.nextUrl.clone();
@@ -48,7 +50,13 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Redirect authenticated users away from auth pages
-  if (user && (pathname.startsWith("/login") || pathname.startsWith("/signup"))) {
+  // (but allow /reset-password since the user has a session after clicking the reset link)
+  if (
+    user &&
+    (pathname.startsWith("/login") ||
+      pathname.startsWith("/signup") ||
+      pathname.startsWith("/forgot-password"))
+  ) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
