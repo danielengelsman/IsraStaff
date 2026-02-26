@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { formatDateLocal, getIsraelToday } from "@/lib/date-utils";
 import type { RotaDefault, RotaOverride } from "@/types/database";
 import type { RotaWeekEntry, OfficePresence, RotaLocation } from "@/types";
 
@@ -80,12 +81,13 @@ export async function getRotaWeek(
   const profileIds = profiles.map((p) => p.id);
 
   // Calculate the 5 dates (Sun–Thu) from the week start
+  // Use T12:00:00 (noon) to avoid timezone boundary issues with toISOString
   const weekDates: string[] = [];
-  const startDate = new Date(weekStartDate + "T00:00:00");
+  const startDate = new Date(weekStartDate + "T12:00:00");
   for (let i = 0; i < 5; i++) {
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + i);
-    weekDates.push(d.toISOString().split("T")[0]);
+    weekDates.push(formatDateLocal(d));
   }
 
   const endDate = weekDates[4];
@@ -158,13 +160,12 @@ export async function getRotaWeek(
  */
 export async function getOfficePresenceToday(): Promise<OfficePresence[]> {
   const supabase = await createClient();
-  const today = new Date();
-  const dayOfWeek = today.getDay(); // 0=Sun ... 6=Sat
+
+  // Use Israel timezone so "today" is correct even on UTC servers (Netlify)
+  const { dateStr: todayStr, dayOfWeek } = getIsraelToday();
 
   // If today is Friday (5) or Saturday (6), return empty — not a work day
   if (dayOfWeek === 5 || dayOfWeek === 6) return [];
-
-  const todayStr = today.toISOString().split("T")[0];
 
   // Fetch all profiles
   const { data: profiles, error: profileError } = await supabase

@@ -33,6 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft, ChevronRight, Building2, Home, Settings, MessageSquare } from "lucide-react";
 import { setRotaOverride } from "@/lib/actions/rota";
+import { formatDateLocal } from "@/lib/date-utils";
 import { toast } from "sonner";
 import { RotaDefaultsDialog } from "./rota-defaults-dialog";
 import type { RotaWeekEntry } from "@/types";
@@ -67,7 +68,7 @@ export function RotaWeekGrid({
   for (let i = 0; i < 5; i++) {
     const d = new Date(startDate);
     d.setDate(startDate.getDate() + i);
-    const dateStr = d.toISOString().split("T")[0];
+    const dateStr = formatDateLocal(d);
     const dayNum = d.getDate();
     const monthShort = d.toLocaleDateString("en-US", { month: "short" });
     weekDates.push({
@@ -85,7 +86,7 @@ export function RotaWeekGrid({
   function navigateWeek(offset: number) {
     const newStart = new Date(startDate);
     newStart.setDate(startDate.getDate() + offset * 7);
-    const newWeekStr = newStart.toISOString().split("T")[0];
+    const newWeekStr = formatDateLocal(newStart);
     const params = new URLSearchParams();
     params.set("week", newWeekStr);
     if (selectedDepartment) params.set("department", selectedDepartment);

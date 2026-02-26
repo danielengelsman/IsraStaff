@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/queries/profiles";
 import { getRotaWeek, getRotaDefaults } from "@/lib/queries/rota";
 import { getDepartments } from "@/lib/queries/departments";
+import { formatDateLocal, getIsraelToday } from "@/lib/date-utils";
 import { PageHeader } from "@/components/shared/page-header";
 import { RotaWeekGrid } from "@/components/rota/rota-week-grid";
 import type { UserRole } from "@/types";
@@ -18,11 +19,11 @@ export default async function RotaPage({
   const role = profile.role as UserRole;
   const canEdit = role === "manager" || role === "admin";
 
-  // Determine the current week's Sunday
-  const today = new Date();
-  const currentSunday = new Date(today);
-  currentSunday.setDate(today.getDate() - today.getDay());
-  const weekStart = params.week ?? currentSunday.toISOString().split("T")[0];
+  // Determine the current week's Sunday (using Israel timezone for correct day)
+  const { dateStr: todayStr, dayOfWeek: todayDow } = getIsraelToday();
+  const todayDate = new Date(todayStr + "T12:00:00");
+  todayDate.setDate(todayDate.getDate() - todayDow);
+  const weekStart = params.week ?? formatDateLocal(todayDate);
 
   const departmentFilter = params.department ?? undefined;
 
