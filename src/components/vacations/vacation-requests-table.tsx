@@ -40,12 +40,10 @@ export function VacationRequestsTable({
   userRole,
 }: VacationRequestsTableProps) {
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [typeFilter, setTypeFilter] = useState<string>("all");
   const router = useRouter();
 
   const filtered = requests.filter((r) => {
     if (statusFilter !== "all" && r.status !== statusFilter) return false;
-    if (typeFilter !== "all" && r.type !== typeFilter) return false;
     return true;
   });
 
@@ -94,17 +92,6 @@ export function VacationRequestsTable({
             <SelectItem value="approved">Approved</SelectItem>
             <SelectItem value="rejected">Rejected</SelectItem>
             <SelectItem value="cancelled">Cancelled</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
-          <SelectTrigger className="w-[150px]">
-            <SelectValue placeholder="Type" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Types</SelectItem>
-            <SelectItem value="vacation">Vacation</SelectItem>
-            <SelectItem value="sick">Sick</SelectItem>
-            <SelectItem value="personal">Personal</SelectItem>
           </SelectContent>
         </Select>
       </div>

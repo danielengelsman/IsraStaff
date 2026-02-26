@@ -25,7 +25,7 @@ export async function getCalendarEvents(
           title: `${profile?.full_name || "Unknown"} - ${v.type}`,
           start: v.start_date,
           end: v.end_date,
-          type: v.type as "vacation" | "sick" | "personal",
+          type: v.type as "vacation",
           status: v.status,
           profileName: profile?.full_name || "Unknown",
           profileId: v.profile_id,

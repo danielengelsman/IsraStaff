@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Palmtree, Thermometer, User } from "lucide-react";
+import { Palmtree } from "lucide-react";
 import type { VacationAllowance } from "@/types/database";
 
 type VacationBalanceCardsProps = {
@@ -29,26 +29,10 @@ export function VacationBalanceCards({ allowance }: VacationBalanceCardsProps) {
       color: "text-blue-600",
       progressColor: "bg-blue-600",
     },
-    {
-      label: "Sick Days",
-      total: allowance.sick_days,
-      used: allowance.used_sick,
-      icon: Thermometer,
-      color: "text-red-600",
-      progressColor: "bg-red-600",
-    },
-    {
-      label: "Personal Days",
-      total: allowance.personal_days,
-      used: allowance.used_personal,
-      icon: User,
-      color: "text-green-600",
-      progressColor: "bg-green-600",
-    },
   ];
 
   return (
-    <div className="grid gap-4 sm:grid-cols-3">
+    <div className="grid gap-4">
       {categories.map((cat) => {
         const remaining = cat.total - cat.used;
         const percentage = cat.total > 0 ? (cat.used / cat.total) * 100 : 0;

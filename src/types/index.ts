@@ -25,7 +25,7 @@ export type CalendarEvent = {
   title: string;
   start: string;
   end: string;
-  type: "vacation" | "sick" | "personal" | "business_trip";
+  type: "vacation" | "business_trip";
   status: string;
   profileName: string;
   profileId: string;

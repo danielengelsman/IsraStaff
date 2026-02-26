@@ -38,10 +38,6 @@ type AllowanceRow = {
   year: number;
   total_days: number;
   used_days: number;
-  sick_days: number;
-  used_sick: number;
-  personal_days: number;
-  used_personal: number;
   profiles: {
     full_name: string;
     email: string;
@@ -61,8 +57,6 @@ export function AllowancesManager({ allowances, initialYear }: AllowancesManager
   const [loading, setLoading] = useState(false);
   const [editedRows, setEditedRows] = useState<Record<string, {
     total_days: number;
-    sick_days: number;
-    personal_days: number;
   }>>({});
   const router = useRouter();
 
@@ -88,8 +82,6 @@ export function AllowancesManager({ allowances, initialYear }: AllowancesManager
       profile_id: allowance.profile_id,
       year: allowance.year,
       total_days: edits.total_days ?? allowance.total_days,
-      sick_days: edits.sick_days ?? allowance.sick_days,
-      personal_days: edits.personal_days ?? allowance.personal_days,
     });
     setLoading(false);
 
@@ -112,8 +104,6 @@ export function AllowancesManager({ allowances, initialYear }: AllowancesManager
     const form = new FormData(e.currentTarget);
     const result = await initializeYearAllowances(year, {
       total_days: Number(form.get("default_vacation")),
-      sick_days: Number(form.get("default_sick")),
-      personal_days: Number(form.get("default_personal")),
     });
     setLoading(false);
 
@@ -163,19 +153,9 @@ export function AllowancesManager({ allowances, initialYear }: AllowancesManager
               <p className="text-sm text-muted-foreground">
                 Create default allowances for employees who don&apos;t have one yet for {year}.
               </p>
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="default_vacation">Vacation Days</Label>
-                  <Input id="default_vacation" name="default_vacation" type="number" defaultValue={12} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="default_sick">Sick Days</Label>
-                  <Input id="default_sick" name="default_sick" type="number" defaultValue={5} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="default_personal">Personal Days</Label>
-                  <Input id="default_personal" name="default_personal" type="number" defaultValue={3} />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="default_vacation">Vacation Days</Label>
+                <Input id="default_vacation" name="default_vacation" type="number" defaultValue={12} />
               </div>
               <DialogFooter>
                 <Button type="submit" disabled={loading}>
@@ -195,17 +175,13 @@ export function AllowancesManager({ allowances, initialYear }: AllowancesManager
               <TableHead>Department</TableHead>
               <TableHead className="text-center">Vacation Days</TableHead>
               <TableHead className="text-center">Used</TableHead>
-              <TableHead className="text-center">Sick Days</TableHead>
-              <TableHead className="text-center">Used</TableHead>
-              <TableHead className="text-center">Personal Days</TableHead>
-              <TableHead className="text-center">Used</TableHead>
               <TableHead className="w-[60px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
             {allowances.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center text-muted-foreground py-8">
+                <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
                   No allowances for {year}. Click &quot;Initialize Year&quot; to create them.
                 </TableCell>
               </TableRow>
@@ -230,30 +206,6 @@ export function AllowancesManager({ allowances, initialYear }: AllowancesManager
                     </TableCell>
                     <TableCell className="text-center text-sm text-muted-foreground">
                       {a.used_days}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Input
-                        type="number"
-                        step="0.5"
-                        className="mx-auto h-8 w-16 text-center"
-                        defaultValue={a.sick_days}
-                        onChange={(e) => handleEdit(a.id, "sick_days", Number(e.target.value))}
-                      />
-                    </TableCell>
-                    <TableCell className="text-center text-sm text-muted-foreground">
-                      {a.used_sick}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <Input
-                        type="number"
-                        step="0.5"
-                        className="mx-auto h-8 w-16 text-center"
-                        defaultValue={a.personal_days}
-                        onChange={(e) => handleEdit(a.id, "personal_days", Number(e.target.value))}
-                      />
-                    </TableCell>
-                    <TableCell className="text-center text-sm text-muted-foreground">
-                      {a.used_personal}
                     </TableCell>
                     <TableCell>
                       {hasEdits && (

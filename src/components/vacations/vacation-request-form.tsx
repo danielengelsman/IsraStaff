@@ -7,13 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -24,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { createVacationRequest } from "@/lib/actions/vacations";
 import { calculateBusinessDays } from "@/lib/utils/dates";
-import { VACATION_TYPES } from "@/lib/utils/constants";
 import { toast } from "sonner";
 import { Plus } from "lucide-react";
 import type { VacationAllowance } from "@/types/database";
@@ -38,7 +30,6 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const [type, setType] = useState<"vacation" | "sick" | "personal">("vacation");
   const [notes, setNotes] = useState("");
   const router = useRouter();
 
@@ -48,11 +39,7 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
       : 0;
 
   const remaining = allowance
-    ? type === "vacation"
-      ? allowance.total_days - allowance.used_days
-      : type === "sick"
-      ? allowance.sick_days - allowance.used_sick
-      : allowance.personal_days - allowance.used_personal
+    ? allowance.total_days - allowance.used_days
     : 0;
 
   async function handleSubmit(e: React.FormEvent) {
@@ -62,7 +49,7 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
     const result = await createVacationRequest({
       start_date: startDate,
       end_date: endDate,
-      type,
+      type: "vacation" as const,
       notes: notes || undefined,
     });
 
@@ -77,7 +64,6 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
     setOpen(false);
     setStartDate("");
     setEndDate("");
-    setType("vacation");
     setNotes("");
     router.refresh();
   }
@@ -94,26 +80,10 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
         <DialogHeader>
           <DialogTitle>Request Time Off</DialogTitle>
           <DialogDescription>
-            Submit a new vacation, sick, or personal day request.
+            Submit a new vacation day request.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="type">Type</Label>
-            <Select value={type} onValueChange={(v) => setType(v as typeof type)}>
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(VACATION_TYPES).map(([key, config]) => (
-                  <SelectItem key={key} value={key}>
-                    {config.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="start_date">Start Date</Label>
@@ -146,7 +116,7 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
               </p>
               {allowance && (
                 <p className="text-muted-foreground">
-                  {remaining} {VACATION_TYPES[type].label.toLowerCase()} days remaining
+                  {remaining} vacation days remaining
                   {businessDays > remaining && (
                     <span className="ml-1 text-red-600">(exceeds balance!)</span>
                   )}

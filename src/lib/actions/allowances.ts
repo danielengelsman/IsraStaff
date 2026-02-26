@@ -7,8 +7,6 @@ export async function upsertAllowance(data: {
   profile_id: string;
   year: number;
   total_days: number;
-  sick_days: number;
-  personal_days: number;
 }) {
   const supabase = await createClient();
 
@@ -19,8 +17,6 @@ export async function upsertAllowance(data: {
         profile_id: data.profile_id,
         year: data.year,
         total_days: data.total_days,
-        sick_days: data.sick_days,
-        personal_days: data.personal_days,
       },
       { onConflict: "profile_id,year" }
     );
@@ -34,7 +30,7 @@ export async function upsertAllowance(data: {
 
 export async function initializeYearAllowances(
   year: number,
-  defaults: { total_days: number; sick_days: number; personal_days: number }
+  defaults: { total_days: number }
 ) {
   const supabase = await createClient();
 
@@ -56,8 +52,6 @@ export async function initializeYearAllowances(
       profile_id: p.id,
       year,
       total_days: defaults.total_days,
-      sick_days: defaults.sick_days,
-      personal_days: defaults.personal_days,
     }));
 
   if (newAllowances.length === 0) {

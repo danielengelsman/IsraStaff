@@ -8,7 +8,7 @@ import { calculateBusinessDays } from "@/lib/utils/dates";
 export async function createVacationRequest(formData: {
   start_date: string;
   end_date: string;
-  type: "vacation" | "sick" | "personal";
+  type: "vacation";
   notes?: string;
 }) {
   const supabase = await createClient();

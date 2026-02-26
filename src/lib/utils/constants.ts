@@ -1,7 +1,5 @@
 export const VACATION_TYPES = {
   vacation: { label: "Vacation", color: "bg-blue-500", textColor: "text-blue-700", bgLight: "bg-blue-50" },
-  sick: { label: "Sick Leave", color: "bg-red-500", textColor: "text-red-700", bgLight: "bg-red-50" },
-  personal: { label: "Personal", color: "bg-green-500", textColor: "text-green-700", bgLight: "bg-green-50" },
 } as const;
 
 export const TRIP_STATUSES = {

@@ -50,9 +50,7 @@ BEGIN
   IF NEW.status = 'approved' AND OLD.status = 'pending' THEN
     UPDATE public.vacation_allowances
     SET
-      used_days = CASE WHEN NEW.type = 'vacation' THEN used_days + NEW.total_days ELSE used_days END,
-      used_sick = CASE WHEN NEW.type = 'sick' THEN used_sick + NEW.total_days ELSE used_sick END,
-      used_personal = CASE WHEN NEW.type = 'personal' THEN used_personal + NEW.total_days ELSE used_personal END,
+      used_days = used_days + NEW.total_days,
       updated_at = now()
     WHERE profile_id = NEW.profile_id
       AND year = EXTRACT(YEAR FROM NEW.start_date);
@@ -62,9 +60,7 @@ BEGIN
   IF NEW.status = 'cancelled' AND OLD.status = 'approved' THEN
     UPDATE public.vacation_allowances
     SET
-      used_days = CASE WHEN NEW.type = 'vacation' THEN GREATEST(used_days - NEW.total_days, 0) ELSE used_days END,
-      used_sick = CASE WHEN NEW.type = 'sick' THEN GREATEST(used_sick - NEW.total_days, 0) ELSE used_sick END,
-      used_personal = CASE WHEN NEW.type = 'personal' THEN GREATEST(used_personal - NEW.total_days, 0) ELSE used_personal END,
+      used_days = GREATEST(used_days - NEW.total_days, 0),
       updated_at = now()
     WHERE profile_id = NEW.profile_id
       AND year = EXTRACT(YEAR FROM NEW.start_date);

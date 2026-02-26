@@ -92,10 +92,6 @@ export type Database = {
           year: number;
           total_days: number;
           used_days: number;
-          sick_days: number;
-          used_sick: number;
-          personal_days: number;
-          used_personal: number;
           created_at: string;
           updated_at: string;
         };
@@ -105,10 +101,6 @@ export type Database = {
           year: number;
           total_days?: number;
           used_days?: number;
-          sick_days?: number;
-          used_sick?: number;
-          personal_days?: number;
-          used_personal?: number;
           created_at?: string;
           updated_at?: string;
         };
@@ -117,10 +109,6 @@ export type Database = {
           year?: number;
           total_days?: number;
           used_days?: number;
-          sick_days?: number;
-          used_sick?: number;
-          personal_days?: number;
-          used_personal?: number;
           updated_at?: string;
         };
         Relationships: [
@@ -139,7 +127,7 @@ export type Database = {
           profile_id: string;
           start_date: string;
           end_date: string;
-          type: "vacation" | "sick" | "personal";
+          type: "vacation";
           status: "pending" | "approved" | "rejected" | "cancelled";
           notes: string | null;
           reviewed_by: string | null;
@@ -154,7 +142,7 @@ export type Database = {
           profile_id: string;
           start_date: string;
           end_date: string;
-          type: "vacation" | "sick" | "personal";
+          type: "vacation";
           status?: "pending" | "approved" | "rejected" | "cancelled";
           notes?: string | null;
           reviewed_by?: string | null;
@@ -167,7 +155,7 @@ export type Database = {
         Update: {
           start_date?: string;
           end_date?: string;
-          type?: "vacation" | "sick" | "personal";
+          type?: "vacation";
           status?: "pending" | "approved" | "rejected" | "cancelled";
           notes?: string | null;
           reviewed_by?: string | null;

@@ -39,8 +39,6 @@ type CalendarViewProps = {
 
 const EVENT_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
   vacation: { bg: "bg-blue-50", text: "text-blue-700", dot: "bg-blue-500" },
-  sick: { bg: "bg-red-50", text: "text-red-700", dot: "bg-red-500" },
-  personal: { bg: "bg-green-50", text: "text-green-700", dot: "bg-green-500" },
   business_trip: { bg: "bg-orange-50", text: "text-orange-700", dot: "bg-orange-500" },
 };
 
