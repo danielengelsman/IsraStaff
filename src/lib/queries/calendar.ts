@@ -13,7 +13,7 @@ export async function getCalendarEvents(
   if (type === "vacations" || type === "all") {
     const { data: vacations } = await supabase
       .from("vacation_requests")
-      .select("id, start_date, end_date, type, status, profile_id, profiles(full_name)")
+      .select("id, start_date, end_date, type, period, status, profile_id, profiles(full_name)")
       .in("status", ["approved", "pending"])
       .gte("end_date", startDate)
       .lte("start_date", endDate);
@@ -21,9 +21,10 @@ export async function getCalendarEvents(
     if (vacations) {
       for (const v of vacations) {
         const profile = v.profiles as unknown as { full_name: string };
+        const periodSuffix = v.period === "morning" ? " (AM off)" : v.period === "afternoon" ? " (PM off)" : "";
         events.push({
           id: v.id,
-          title: `${profile?.full_name || "Unknown"} - ${v.type}`,
+          title: `${profile?.full_name || "Unknown"} - ${v.type}${periodSuffix}`,
           start: v.start_date,
           end: v.end_date,
           type: v.type as "vacation",

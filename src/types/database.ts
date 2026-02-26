@@ -128,6 +128,7 @@ export type Database = {
           start_date: string;
           end_date: string;
           type: "vacation";
+          period: "full" | "morning" | "afternoon";
           status: "pending" | "approved" | "rejected" | "cancelled";
           notes: string | null;
           reviewed_by: string | null;
@@ -143,6 +144,7 @@ export type Database = {
           start_date: string;
           end_date: string;
           type: "vacation";
+          period?: "full" | "morning" | "afternoon";
           status?: "pending" | "approved" | "rejected" | "cancelled";
           notes?: string | null;
           reviewed_by?: string | null;
@@ -156,6 +158,7 @@ export type Database = {
           start_date?: string;
           end_date?: string;
           type?: "vacation";
+          period?: "full" | "morning" | "afternoon";
           status?: "pending" | "approved" | "rejected" | "cancelled";
           notes?: string | null;
           reviewed_by?: string | null;
@@ -396,6 +399,7 @@ export type Database = {
           profile_id: string;
           date: string;
           location: "office" | "home";
+          notes: string | null;
           created_by: string;
           created_at: string;
           updated_at: string;
@@ -405,6 +409,7 @@ export type Database = {
           profile_id: string;
           date: string;
           location: "office" | "home";
+          notes?: string | null;
           created_by: string;
           created_at?: string;
           updated_at?: string;
@@ -413,6 +418,7 @@ export type Database = {
           profile_id?: string;
           date?: string;
           location?: "office" | "home";
+          notes?: string | null;
           created_by?: string;
           updated_at?: string;
         };

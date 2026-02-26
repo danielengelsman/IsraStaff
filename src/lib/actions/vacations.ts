@@ -9,6 +9,7 @@ export async function createVacationRequest(formData: {
   start_date: string;
   end_date: string;
   type: "vacation";
+  period?: "full" | "morning" | "afternoon";
   notes?: string;
 }) {
   const supabase = await createClient();
@@ -21,10 +22,19 @@ export async function createVacationRequest(formData: {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
 
-  const totalDays = calculateBusinessDays(
-    new Date(validated.data.start_date),
-    new Date(validated.data.end_date)
-  );
+  const period = formData.period ?? "full";
+  const isSingleDay = validated.data.start_date === validated.data.end_date;
+  const isHalfDay = isSingleDay && (period === "morning" || period === "afternoon");
+
+  let totalDays: number;
+  if (isHalfDay) {
+    totalDays = 0.5;
+  } else {
+    totalDays = calculateBusinessDays(
+      new Date(validated.data.start_date),
+      new Date(validated.data.end_date)
+    );
+  }
 
   if (totalDays === 0) {
     return { error: "Selected dates contain no business days" };
@@ -37,6 +47,7 @@ export async function createVacationRequest(formData: {
       start_date: validated.data.start_date,
       end_date: validated.data.end_date,
       type: validated.data.type,
+      period: isHalfDay ? period : "full",
       notes: validated.data.notes || null,
       total_days: totalDays,
     });

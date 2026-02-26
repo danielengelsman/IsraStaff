@@ -44,6 +44,7 @@ export async function setRotaOverride(input: {
   profile_id: string;
   date: string;
   location: "office" | "home";
+  notes?: string;
 }) {
   const supabase = await createClient();
 
@@ -57,6 +58,7 @@ export async function setRotaOverride(input: {
         profile_id: input.profile_id,
         date: input.date,
         location: input.location,
+        notes: input.notes ?? null,
         created_by: user.id,
       },
       { onConflict: "profile_id,date" }

@@ -36,6 +36,8 @@ export function UpcomingVacations({ vacations }: UpcomingVacationsProps) {
                     </p>
                     <p className="text-xs text-muted-foreground">
                       {v.total_days} day{v.total_days !== 1 ? "s" : ""}
+                      {v.period === "morning" && " (morning)"}
+                      {v.period === "afternoon" && " (afternoon)"}
                     </p>
                   </div>
                   <Badge variant="outline" className={typeConfig.textColor}>

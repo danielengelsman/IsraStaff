@@ -54,6 +54,9 @@ export function OfficeToday({ presence }: OfficeTodayProps) {
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-green-500" />
                   {p.profileName.split(" ")[0]}
+                  {p.notes && (
+                    <span className="font-normal text-green-600/70">&middot; {p.notes}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -75,6 +78,9 @@ export function OfficeToday({ presence }: OfficeTodayProps) {
                 >
                   <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />
                   {p.profileName.split(" ")[0]}
+                  {p.notes && (
+                    <span className="font-normal text-blue-600/70">&middot; {p.notes}</span>
+                  )}
                 </div>
               ))}
             </div>

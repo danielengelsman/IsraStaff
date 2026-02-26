@@ -103,16 +103,19 @@ export async function getRotaWeek(
     defaultMap.get(d.profile_id)!.set(d.day_of_week, d.location as RotaLocation);
   }
 
-  // Index overrides: profileId -> date -> location
-  const overrideMap = new Map<string, Map<string, RotaLocation>>();
+  // Index overrides: profileId -> date -> { location, notes }
+  const overrideMap = new Map<string, Map<string, { location: RotaLocation; notes: string | null }>>();
   for (const o of overrides) {
     if (!overrideMap.has(o.profile_id)) overrideMap.set(o.profile_id, new Map());
-    overrideMap.get(o.profile_id)!.set(o.date, o.location as RotaLocation);
+    overrideMap.get(o.profile_id)!.set(o.date, {
+      location: o.location as RotaLocation,
+      notes: o.notes ?? null,
+    });
   }
 
   // Build the result
   return profiles.map((p) => {
-    const days: Record<string, { location: RotaLocation; isOverride: boolean }> = {};
+    const days: Record<string, { location: RotaLocation; isOverride: boolean; notes: string | null }> = {};
 
     for (let i = 0; i < 5; i++) {
       const dateStr = weekDates[i];
@@ -120,18 +123,21 @@ export async function getRotaWeek(
       const profileDefaults = defaultMap.get(p.id);
 
       if (profileOverrides?.has(dateStr)) {
+        const override = profileOverrides.get(dateStr)!;
         days[dateStr] = {
-          location: profileOverrides.get(dateStr)!,
+          location: override.location,
           isOverride: true,
+          notes: override.notes,
         };
       } else if (profileDefaults?.has(i)) {
         days[dateStr] = {
           location: profileDefaults.get(i)!,
           isOverride: false,
+          notes: null,
         };
       } else {
         // No default set — assume office
-        days[dateStr] = { location: "office", isOverride: false };
+        days[dateStr] = { location: "office", isOverride: false, notes: null };
       }
     }
 
@@ -194,15 +200,19 @@ export async function getOfficePresenceToday(): Promise<OfficePresence[]> {
     defaultMap.set(d.profile_id, d.location as RotaLocation);
   }
 
-  const overrideMap = new Map<string, RotaLocation>();
+  const overrideMap = new Map<string, { location: RotaLocation; notes: string | null }>();
   for (const o of (overrides ?? []) as RotaOverride[]) {
-    overrideMap.set(o.profile_id, o.location as RotaLocation);
+    overrideMap.set(o.profile_id, {
+      location: o.location as RotaLocation,
+      notes: o.notes ?? null,
+    });
   }
 
   return profiles.map((p) => {
     const dept = (p as Record<string, unknown>).departments as { name: string } | null;
+    const override = overrideMap.get(p.id);
     const location: RotaLocation =
-      overrideMap.get(p.id) ??
+      override?.location ??
       defaultMap.get(p.id) ??
       "office"; // default if nothing set
 
@@ -212,6 +222,7 @@ export async function getOfficePresenceToday(): Promise<OfficePresence[]> {
       avatarUrl: p.avatar_url,
       departmentName: dept?.name ?? null,
       location,
+      notes: override?.notes ?? null,
     };
   });
 }

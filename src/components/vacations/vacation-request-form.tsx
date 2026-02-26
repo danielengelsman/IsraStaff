@@ -30,17 +30,34 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
   const [loading, setLoading] = useState(false);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [period, setPeriod] = useState<"full" | "morning" | "afternoon">("full");
   const [notes, setNotes] = useState("");
   const router = useRouter();
 
+  const isSingleDay = startDate && endDate && startDate === endDate;
+  const isHalfDay = isSingleDay && (period === "morning" || period === "afternoon");
+
   const businessDays =
     startDate && endDate
-      ? calculateBusinessDays(new Date(startDate), new Date(endDate))
+      ? isHalfDay
+        ? 0.5
+        : calculateBusinessDays(new Date(startDate), new Date(endDate))
       : 0;
 
   const remaining = allowance
     ? allowance.total_days - allowance.used_days
     : 0;
+
+  // Reset period when dates change to multi-day
+  function handleStartDateChange(value: string) {
+    setStartDate(value);
+    if (value !== endDate) setPeriod("full");
+  }
+
+  function handleEndDateChange(value: string) {
+    setEndDate(value);
+    if (value !== startDate) setPeriod("full");
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +67,7 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
       start_date: startDate,
       end_date: endDate,
       type: "vacation" as const,
+      period: isSingleDay ? period : "full",
       notes: notes || undefined,
     });
 
@@ -64,6 +82,7 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
     setOpen(false);
     setStartDate("");
     setEndDate("");
+    setPeriod("full");
     setNotes("");
     router.refresh();
   }
@@ -91,7 +110,7 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
                 id="start_date"
                 type="date"
                 value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
+                onChange={(e) => handleStartDateChange(e.target.value)}
                 required
               />
             </div>
@@ -101,18 +120,44 @@ export function VacationRequestForm({ allowance }: VacationRequestFormProps) {
                 id="end_date"
                 type="date"
                 value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
+                onChange={(e) => handleEndDateChange(e.target.value)}
                 min={startDate}
                 required
               />
             </div>
           </div>
 
+          {/* Half-day selector — only shown for single-day requests */}
+          {isSingleDay && (
+            <div className="space-y-2">
+              <Label>Duration</Label>
+              <div className="flex gap-2">
+                {(["full", "morning", "afternoon"] as const).map((p) => (
+                  <Button
+                    key={p}
+                    type="button"
+                    size="sm"
+                    variant={period === p ? "default" : "outline"}
+                    className="flex-1"
+                    onClick={() => setPeriod(p)}
+                  >
+                    {p === "full" ? "Full Day" : p === "morning" ? "Morning" : "Afternoon"}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {businessDays > 0 && (
             <div className="rounded-md border p-3 text-sm">
               <p>
                 <span className="font-medium">{businessDays}</span> business day
                 {businessDays !== 1 ? "s" : ""}
+                {isHalfDay && (
+                  <span className="text-muted-foreground">
+                    {" "}({period === "morning" ? "morning off" : "afternoon off"})
+                  </span>
+                )}
               </p>
               {allowance && (
                 <p className="text-muted-foreground">

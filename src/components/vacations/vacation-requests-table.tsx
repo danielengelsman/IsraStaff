@@ -135,7 +135,15 @@ export function VacationRequestsTable({
                         {typeConfig.label}
                       </Badge>
                     </TableCell>
-                    <TableCell>{req.total_days}</TableCell>
+                    <TableCell>
+                      {req.total_days}
+                      {req.period === "morning" && (
+                        <span className="ml-1 text-xs text-muted-foreground">(AM)</span>
+                      )}
+                      {req.period === "afternoon" && (
+                        <span className="ml-1 text-xs text-muted-foreground">(PM)</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <StatusBadge status={req.status} />
                     </TableCell>

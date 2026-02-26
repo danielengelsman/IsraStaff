@@ -61,7 +61,7 @@ export type RotaWeekEntry = {
   profileName: string;
   avatarUrl: string | null;
   departmentName: string | null;
-  days: Record<string, { location: RotaLocation; isOverride: boolean }>;
+  days: Record<string, { location: RotaLocation; isOverride: boolean; notes: string | null }>;
 };
 
 export type OfficePresence = {
@@ -70,4 +70,5 @@ export type OfficePresence = {
   avatarUrl: string | null;
   departmentName: string | null;
   location: RotaLocation;
+  notes: string | null;
 };
