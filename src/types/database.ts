@@ -357,6 +357,82 @@ export type Database = {
         };
         Relationships: [];
       };
+      rota_defaults: {
+        Row: {
+          id: string;
+          profile_id: string;
+          day_of_week: number;
+          location: "office" | "home";
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          day_of_week: number;
+          location?: "office" | "home";
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          profile_id?: string;
+          day_of_week?: number;
+          location?: "office" | "home";
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "rota_defaults_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      rota_overrides: {
+        Row: {
+          id: string;
+          profile_id: string;
+          date: string;
+          location: "office" | "home";
+          created_by: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          profile_id: string;
+          date: string;
+          location: "office" | "home";
+          created_by: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          profile_id?: string;
+          date?: string;
+          location?: "office" | "home";
+          created_by?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "rota_overrides_profile_id_fkey";
+            columns: ["profile_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "rota_overrides_created_by_fkey";
+            columns: ["created_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
@@ -387,3 +463,5 @@ export type BusinessTrip = Database["public"]["Tables"]["business_trips"]["Row"]
 export type TripEvent = Database["public"]["Tables"]["trip_events"]["Row"];
 export type TripExpense = Database["public"]["Tables"]["trip_expenses"]["Row"];
 export type Holiday = Database["public"]["Tables"]["holidays"]["Row"];
+export type RotaDefault = Database["public"]["Tables"]["rota_defaults"]["Row"];
+export type RotaOverride = Database["public"]["Tables"]["rota_overrides"]["Row"];

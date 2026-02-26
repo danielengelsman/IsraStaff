@@ -43,3 +43,31 @@ export type TeamMemberWithStatus = {
   current_vacation: VacationRequest | null;
   upcoming_vacations: VacationRequest[];
 };
+
+// --- Office Rota ---
+
+export type RotaLocation = "office" | "home";
+
+export const ISRAEL_WORK_DAYS: { value: number; label: string; short: string }[] = [
+  { value: 0, label: "Sunday", short: "Sun" },
+  { value: 1, label: "Monday", short: "Mon" },
+  { value: 2, label: "Tuesday", short: "Tue" },
+  { value: 3, label: "Wednesday", short: "Wed" },
+  { value: 4, label: "Thursday", short: "Thu" },
+];
+
+export type RotaWeekEntry = {
+  profileId: string;
+  profileName: string;
+  avatarUrl: string | null;
+  departmentName: string | null;
+  days: Record<string, { location: RotaLocation; isOverride: boolean }>;
+};
+
+export type OfficePresence = {
+  profileId: string;
+  profileName: string;
+  avatarUrl: string | null;
+  departmentName: string | null;
+  location: RotaLocation;
+};

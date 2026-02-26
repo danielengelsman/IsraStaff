@@ -35,6 +35,11 @@ export const navigationItems: NavItem[] = [
     ],
   },
   {
+    title: "Office Rota",
+    href: "/rota",
+    icon: "Building2",
+  },
+  {
     title: "Admin",
     href: "/admin",
     icon: "Settings",

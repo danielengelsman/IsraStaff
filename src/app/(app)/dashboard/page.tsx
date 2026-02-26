@@ -4,6 +4,7 @@ import { getTeamMembersWithStatus } from "@/lib/queries/profiles";
 import { getVacationBalance, getUpcomingVacations, getVacationRequests } from "@/lib/queries/vacations";
 import { getActiveTrips } from "@/lib/queries/travel";
 import { getManagedDepartment } from "@/lib/queries/departments";
+import { getOfficePresenceToday } from "@/lib/queries/rota";
 import { EmployeeDashboard } from "@/components/dashboard/employee-dashboard";
 import { ManagerDashboard } from "@/components/dashboard/manager-dashboard";
 import { AdminDashboard } from "@/components/dashboard/admin-dashboard";
@@ -14,11 +15,12 @@ export default async function DashboardPage() {
 
   const canAccessTravel = profile.role === "admin" || profile.can_access_travel;
 
-  // Data common to all roles: own balance, own upcoming vacations, own active trips
-  const [allowance, upcoming, activeTrips] = await Promise.all([
+  // Data common to all roles: own balance, own upcoming vacations, own active trips, office presence
+  const [allowance, upcoming, activeTrips, officePresence] = await Promise.all([
     getVacationBalance(profile.id),
     getUpcomingVacations(profile.id),
     canAccessTravel ? getActiveTrips(profile.id) : Promise.resolve([]),
+    getOfficePresenceToday(),
   ]);
 
   // --- Employee ---
@@ -30,6 +32,7 @@ export default async function DashboardPage() {
         upcomingVacations={upcoming}
         activeTrips={activeTrips}
         canAccessTravel={canAccessTravel}
+        officePresence={officePresence}
       />
     );
   }
@@ -53,6 +56,7 @@ export default async function DashboardPage() {
         departmentName={managedDept?.name ?? "Your Team"}
         teamMembers={teamMembers}
         pendingRequests={pendingRequests}
+        officePresence={officePresence}
       />
     );
   }
@@ -68,6 +72,7 @@ export default async function DashboardPage() {
       activeTrips={activeTrips}
       canAccessTravel={canAccessTravel}
       pendingRequests={pendingRequests}
+      officePresence={officePresence}
     />
   );
 }

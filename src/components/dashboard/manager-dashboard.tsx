@@ -6,9 +6,10 @@ import { UpcomingVacations } from "@/components/dashboard/upcoming-vacations";
 import { ActiveTrips } from "@/components/dashboard/active-trips";
 import { PendingApprovals } from "@/components/dashboard/pending-approvals";
 import { TeamOverview } from "@/components/dashboard/team-overview";
+import { OfficeToday } from "@/components/dashboard/office-today";
 import { Plus, Plane } from "lucide-react";
 import type { Profile, VacationAllowance, VacationRequest, BusinessTrip } from "@/types/database";
-import type { TeamMemberWithStatus, VacationRequestWithProfile } from "@/types";
+import type { TeamMemberWithStatus, VacationRequestWithProfile, OfficePresence } from "@/types";
 
 type ManagerDashboardProps = {
   profile: Profile;
@@ -19,6 +20,7 @@ type ManagerDashboardProps = {
   departmentName: string;
   teamMembers: TeamMemberWithStatus[];
   pendingRequests: VacationRequestWithProfile[];
+  officePresence: OfficePresence[];
 };
 
 export function ManagerDashboard({
@@ -30,6 +32,7 @@ export function ManagerDashboard({
   departmentName,
   teamMembers,
   pendingRequests,
+  officePresence,
 }: ManagerDashboardProps) {
   return (
     <div className="space-y-6">
@@ -55,6 +58,9 @@ export function ManagerDashboard({
 
       {/* Own Vacation Balance */}
       <VacationBalanceCards allowance={allowance} />
+
+      {/* Who's in the Office Today */}
+      <OfficeToday presence={officePresence} />
 
       {/* Team Overview */}
       <TeamOverview departmentName={departmentName} members={teamMembers} />

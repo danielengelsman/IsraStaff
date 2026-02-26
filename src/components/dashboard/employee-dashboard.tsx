@@ -4,8 +4,10 @@ import { PageHeader } from "@/components/shared/page-header";
 import { VacationBalanceCards } from "@/components/dashboard/vacation-balance-cards";
 import { UpcomingVacations } from "@/components/dashboard/upcoming-vacations";
 import { ActiveTrips } from "@/components/dashboard/active-trips";
+import { OfficeToday } from "@/components/dashboard/office-today";
 import { Plus, Plane } from "lucide-react";
 import type { Profile, VacationAllowance, VacationRequest, BusinessTrip } from "@/types/database";
+import type { OfficePresence } from "@/types";
 
 type EmployeeDashboardProps = {
   profile: Profile;
@@ -13,6 +15,7 @@ type EmployeeDashboardProps = {
   upcomingVacations: VacationRequest[];
   activeTrips: BusinessTrip[];
   canAccessTravel: boolean;
+  officePresence: OfficePresence[];
 };
 
 export function EmployeeDashboard({
@@ -21,6 +24,7 @@ export function EmployeeDashboard({
   upcomingVacations,
   activeTrips,
   canAccessTravel,
+  officePresence,
 }: EmployeeDashboardProps) {
   return (
     <div className="space-y-6">
@@ -46,6 +50,9 @@ export function EmployeeDashboard({
 
       {/* Vacation Balance */}
       <VacationBalanceCards allowance={allowance} />
+
+      {/* Who's in the Office Today */}
+      <OfficeToday presence={officePresence} />
 
       {/* Upcoming Vacations + Active Trips */}
       <div className={`grid gap-6 ${canAccessTravel ? "lg:grid-cols-2" : ""}`}>

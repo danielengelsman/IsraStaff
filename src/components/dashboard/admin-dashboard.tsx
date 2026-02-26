@@ -6,9 +6,10 @@ import { VacationBalanceCards } from "@/components/dashboard/vacation-balance-ca
 import { UpcomingVacations } from "@/components/dashboard/upcoming-vacations";
 import { ActiveTrips } from "@/components/dashboard/active-trips";
 import { PendingApprovals } from "@/components/dashboard/pending-approvals";
+import { OfficeToday } from "@/components/dashboard/office-today";
 import { Plus, Plane, Users, Building2, CalendarDays } from "lucide-react";
 import type { Profile, VacationAllowance, VacationRequest, BusinessTrip } from "@/types/database";
-import type { VacationRequestWithProfile } from "@/types";
+import type { VacationRequestWithProfile, OfficePresence } from "@/types";
 
 type AdminDashboardProps = {
   profile: Profile;
@@ -17,6 +18,7 @@ type AdminDashboardProps = {
   activeTrips: BusinessTrip[];
   canAccessTravel: boolean;
   pendingRequests: VacationRequestWithProfile[];
+  officePresence: OfficePresence[];
 };
 
 export function AdminDashboard({
@@ -26,6 +28,7 @@ export function AdminDashboard({
   activeTrips,
   canAccessTravel,
   pendingRequests,
+  officePresence,
 }: AdminDashboardProps) {
   return (
     <div className="space-y-6">
@@ -53,7 +56,7 @@ export function AdminDashboard({
       <VacationBalanceCards allowance={allowance} />
 
       {/* Admin Quick Stats */}
-      <div className="grid gap-4 sm:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Pending Requests</CardTitle>
@@ -85,18 +88,10 @@ export function AdminDashboard({
             </CardContent>
           </Card>
         </Link>
-        <Link href="/admin/allowances">
-          <Card className="transition-colors hover:bg-accent/50">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Allowances</CardTitle>
-              <CalendarDays className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">Configure</p>
-            </CardContent>
-          </Card>
-        </Link>
       </div>
+
+      {/* Who's in the Office Today */}
+      <OfficeToday presence={officePresence} />
 
       {/* Main Content Grid */}
       <div className={`grid gap-6 ${canAccessTravel ? "lg:grid-cols-2" : ""}`}>
